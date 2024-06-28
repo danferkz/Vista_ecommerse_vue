@@ -11,26 +11,24 @@ export default createStore({
     },
     mutations: {
         initializeStore(state) {
-            const cart = localStorage.getItem('cart')
-            if (cart) {
-                state.cart = JSON.parse(cart)
+            if (localStorage.getItem('cart')) {
+                state.cart = JSON.parse(localStorage.getItem('cart'))
             } else {
                 localStorage.setItem('cart', JSON.stringify(state.cart))
             }
 
-            const token = localStorage.getItem('token')
-            if (token) {
-                state.token = token
+            if (localStorage.getItem('token')) {
+                state.token = localStorage.getItem('token')
                 state.isAuthenticated = true
             } else {
                 state.token = ''
                 state.isAuthenticated = false
-            }
+            } 
         },
         addToCart(state, item) {
-            const exists = state.cart.items.find(i => i.product.id === item.product.id)
-            if (exists) {
-                exists.quantity += parseInt(item.quantity)
+            const exists = state.cart.items.filter(i => i.product.id === item.product.id)
+            if (exists.length) {
+                exists[0].quantity = parseInt(exists[0].quantity) + parseInt(item.quantity)
             } else {
                 state.cart.items.push(item)
             }
@@ -43,13 +41,13 @@ export default createStore({
         setToken(state, token) {
             state.token = token
             state.isAuthenticated = true
-        },
+        },  
         removeToken(state) {
             state.token = ''
             state.isAuthenticated = false
         },
         clearCart(state) {
-            state.cart.items = []
+            state.cart = { items: [] }
 
             localStorage.setItem('cart', JSON.stringify(state.cart))
         },
