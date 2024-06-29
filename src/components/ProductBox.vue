@@ -1,7 +1,7 @@
 <template>
     <div class="product-box">
         <figure class="mb-4">
-            <img :src="product.get_thumbnail || '/path/to/default-thumbnail.jpg'" :alt="product.name" class="w-full h-48 object-cover"/>
+            <img :src="`http://localhost:8000${product.get_thumbnail}`" :alt="product.name" class="w-full h-48 object-cover" />
         </figure>
         <h3 class="text-xl font-semibold mb-2">{{ product.name }}</h3>
         <p class="text-lg font-semibold mb-2">${{ product.price }}</p>
@@ -21,5 +21,5 @@ export default {
 </script>
 
 <style>
-
+/* Aquí puedes agregar estilos específicos para este componente si es necesario */
 </style>
