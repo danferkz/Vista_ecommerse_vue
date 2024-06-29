@@ -7,14 +7,26 @@
             </div>
         </section>
 
-        <div class="latest-products">
-            <h2 class="text-3xl font-semibold text-center">Latest products</h2>
+        <div class="latest-products mb-12">
+            <h2 class="text-3xl font-semibold text-center mb-6">Latest Products</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <ProductBox
                     v-for="product in latestProducts"
                     :key="product.id"
                     :product="product"
+                />
+            </div>
+        </div>
+
+        <div class="latest-categories">
+            <h2 class="text-3xl font-semibold text-center mb-6">Categories</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <CategoryBox
+                    v-for="category in categories"
+                    :key="category.id"
+                    :category="category"
                 />
             </div>
         </div>
@@ -25,14 +37,17 @@
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import ProductBox from '../components/ProductBox.vue';
+import CategoryBox from '../components/CategoryBox.vue';
 
 export default {
     name: 'Home',
     components: {
         ProductBox,
+        CategoryBox,
     },
     setup() {
         const latestProducts = ref([]);
+        const categories = ref([]);
 
         const getLatestProducts = async () => {
             try {
@@ -43,13 +58,24 @@ export default {
             }
         };
 
+        const getCategories = async () => {
+            try {
+                const response = await axios.get('/api/v1/categories/');
+                categories.value = response.data;
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
         onMounted(() => {
             getLatestProducts();
+            getCategories();
             document.title = 'Home | Djackets';
         });
 
         return {
             latestProducts,
+            categories,
         };
     },
 };

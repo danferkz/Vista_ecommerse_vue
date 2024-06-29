@@ -63,8 +63,8 @@ export default {
         },
     },
     methods: {
-        removeFromCart(item) {
-            this.$store.commit('removeCartItem', item.product.id);
+        removeFromCart(productId) {
+            this.$store.commit('removeCartItem', productId);
         }
     },
     mounted() {

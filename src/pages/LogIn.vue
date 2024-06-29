@@ -69,7 +69,7 @@ export default {
                 axios.defaults.headers.common["Authorization"] = "Token " + token;
 
                 // Redirect to a specific route after successful login
-                this.$router.push('/cart'); // Adjust the redirect path as needed
+                this.$router.push('/'); // Adjust the redirect path as needed
             } catch (error) {
                 if (error.response) {
                     for (const property in error.response.data) {

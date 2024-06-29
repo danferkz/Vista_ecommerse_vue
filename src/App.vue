@@ -65,7 +65,7 @@
     </section>
 
     <footer class="footer">
-      <p class="has-text-centered">Copyright (c) 2021</p>
+      <p class="has-text-centered">Copyright (c) 2024</p>
     </footer>
   </div>
 </template>
@@ -77,9 +77,6 @@ export default {
   data() {
     return {
       showMobileMenu: false,
-      cart: {
-        items: []
-      }
     }
   },
   beforeCreate() {
@@ -93,19 +90,35 @@ export default {
         axios.defaults.headers.common['Authorization'] = ""
     }
   },
-  mounted() {
-    this.cart = this.$store.state.cart
-  },
   computed: {
+      cart() {
+          return this.$store.state.cart;
+      },
       cartTotalLength() {
-          let totalLength = 0
-
-          for (let i = 0; i < this.cart.items.length; i++) {
-              totalLength += this.cart.items[i].quantity
-          }
-
-          return totalLength
+          return this.cart.items.reduce((total, item) => total + item.quantity, 0);
       }
+  },
+  watch: {
+    '$route.path': function(newPath) {
+      // Recargar la página si navegamos a la ruta de inicio
+      if (newPath === '/' && !this.isHomePageReloaded) {
+        window.location.reload();
+        this.isHomePageReloaded = true; // Asegura que se recargue solo una vez
+      }
+    },
+    '$store.state.isAuthenticated': function(newValue) {
+      // Recargar la página cuando cambia el estado de autenticación
+      if (newValue !== this.wasAuthenticated) {
+        this.$nextTick(() => {
+          window.location.reload();
+        });
+        this.wasAuthenticated = newValue; // Guarda el estado de autenticación para evitar recargas repetidas
+      }
+    }
+  },
+  created() {
+    this.isHomePageReloaded = false; // Inicializa el flag para la recarga de la página de inicio
+    this.wasAuthenticated = this.$store.state.isAuthenticated; // Inicializa el estado de autenticación
   }
 }
 </script>

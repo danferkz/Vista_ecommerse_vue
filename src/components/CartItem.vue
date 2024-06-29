@@ -27,7 +27,10 @@ import { useStore } from 'vuex';
 export default {
     name: 'CartItem',
     props: {
-        initialItem: Object
+        initialItem: {
+            type: Object,
+            required: true
+        }
     },
     setup(props, { emit }) {
         const store = useStore();
@@ -38,30 +41,50 @@ export default {
         });
 
         const decrementQuantity = () => {
-            if (item.quantity > 1) {
-                item.quantity -= 1;
-                updateCart();
-            } else {
-                removeFromCart();
+            try {
+                if (item.quantity > 1) {
+                    item.quantity -= 1;
+                    updateCart();
+                } else {
+                    removeFromCart();
+                }
+            } catch (error) {
+                console.error('Error decrementing quantity:', error);
             }
         };
 
         const incrementQuantity = () => {
-            if (item.quantity < item.product.quantity) {
-                item.quantity += 1;
-                updateCart();
+            try {
+                if (item.quantity < item.product.quantity) {
+                    item.quantity += 1;
+                    updateCart();
+                }
+            } catch (error) {
+                console.error('Error incrementing quantity:', error);
             }
         };
 
         const updateCart = () => {
-            store.commit('updateCartItem', item);
-            localStorage.setItem('cart', JSON.stringify(store.state.cart));
+            try {
+                store.commit('updateCartItem', item);
+                localStorage.setItem('cart', JSON.stringify(store.state.cart));
+            } catch (error) {
+                console.error('Error updating cart:', error);
+            }
         };
 
         const removeFromCart = () => {
-            store.commit('removeCartItem', item);
-            emit('removeFromCart', item);
-            localStorage.setItem('cart', JSON.stringify(store.state.cart));
+            try {
+                if (item.product && item.product.id) {
+                    store.commit('removeCartItem', item.product.id);
+                    emit('removeFromCart', item.product.id);
+                    localStorage.setItem('cart', JSON.stringify(store.state.cart));
+                } else {
+                    throw new Error('Invalid item or product ID');
+                }
+            } catch (error) {
+                console.error('Error removing from cart:', error);
+            }
         };
 
         return {

@@ -11,12 +11,14 @@ export default createStore({
     },
     mutations: {
         initializeStore(state) {
+            // Carga el carrito desde el almacenamiento local
             if (localStorage.getItem('cart')) {
                 state.cart = JSON.parse(localStorage.getItem('cart'));
             } else {
                 localStorage.setItem('cart', JSON.stringify(state.cart));
             }
 
+            // Carga el token desde el almacenamiento local
             if (localStorage.getItem('token')) {
                 state.token = localStorage.getItem('token');
                 state.isAuthenticated = true;
@@ -57,8 +59,10 @@ export default createStore({
             }
             localStorage.setItem('cart', JSON.stringify(state.cart));
         },
-        removeCartItem(state, itemToRemove) {
-            state.cart.items = state.cart.items.filter(item => item.product.id !== itemToRemove.product.id);
+        removeCartItem(state, productId) {
+            // Elimina el ítem del carrito usando productId
+            state.cart.items = state.cart.items.filter(item => item.product.id !== productId);
+            // Actualiza el almacenamiento local
             localStorage.setItem('cart', JSON.stringify(state.cart));
         },
         setIsLoading(state, status) {
