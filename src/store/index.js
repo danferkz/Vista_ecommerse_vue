@@ -23,7 +23,7 @@ export default createStore({
             } else {
                 state.token = ''
                 state.isAuthenticated = false
-            } 
+            }
         },
         addToCart(state, item) {
             const exists = state.cart.items.filter(i => i.product.id === item.product.id)
@@ -35,25 +35,33 @@ export default createStore({
 
             localStorage.setItem('cart', JSON.stringify(state.cart))
         },
+        updateCartItem(state, updatedItem) {
+            const index = state.cart.items.findIndex(item => item.product.id === updatedItem.product.id);
+            if (index !== -1) {
+                state.cart.items[index] = { ...updatedItem };
+            }
+            localStorage.setItem('cart', JSON.stringify(state.cart));
+        },
+        removeCartItem(state, itemToRemove) {
+            state.cart.items = state.cart.items.filter(item => item.product.id !== itemToRemove.product.id);
+            localStorage.setItem('cart', JSON.stringify(state.cart));
+        },
         setIsLoading(state, status) {
             state.isLoading = status
         },
         setToken(state, token) {
             state.token = token
             state.isAuthenticated = true
-        },  
+        },
         removeToken(state) {
             state.token = ''
             state.isAuthenticated = false
         },
         clearCart(state) {
             state.cart = { items: [] }
-
             localStorage.setItem('cart', JSON.stringify(state.cart))
         },
     },
-    actions: {
-    },
-    modules: {
-    }
+    actions: {},
+    modules: {},
 })

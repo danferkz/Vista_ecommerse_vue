@@ -8,12 +8,12 @@
         <td>${{ item.product.price }}</td>
         <td>
             {{ item.quantity }}
-            <button @click="decrementQuantity(item)" class="text-red-500 mx-2">-</button>
-            <button @click="incrementQuantity(item)" class="text-green-500 mx-2">+</button>
+            <button @click="decrementQuantity" class="text-red-500 mx-2">-</button>
+            <button @click="incrementQuantity" class="text-green-500 mx-2">+</button>
         </td>
-        <td>${{ getItemTotal(item).toFixed(2) }}</td>
+        <td>${{ getItemTotal.toFixed(2) }}</td>
         <td>
-            <button class="text-red-500" @click="removeFromCart(item)">
+            <button class="text-red-500" @click="removeFromCart">
                 &#x2716;
             </button>
         </td>
@@ -21,7 +21,8 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { reactive, computed } from 'vue';
+import { useStore } from 'vuex';
 
 export default {
     name: 'CartItem',
@@ -29,34 +30,36 @@ export default {
         initialItem: Object
     },
     setup(props, { emit }) {
-        const item = ref(props.initialItem);
+        const store = useStore();
+        const item = reactive({ ...props.initialItem });
 
-        const getItemTotal = (item) => {
+        const getItemTotal = computed(() => {
             return item.quantity * item.product.price;
-        };
+        });
 
-        const decrementQuantity = (item) => {
-            item.quantity -= 1;
-
-            if (item.quantity === 0) {
-                emit('removeFromCart', item);
+        const decrementQuantity = () => {
+            if (item.quantity > 1) {
+                item.quantity -= 1;
+                updateCart();
+            } else {
+                removeFromCart();
             }
-
-            updateCart();
         };
 
-        const incrementQuantity = (item) => {
+        const incrementQuantity = () => {
             item.quantity += 1;
             updateCart();
         };
 
         const updateCart = () => {
-            localStorage.setItem('cart', JSON.stringify(this.$store.state.cart));
+            store.commit('updateCartItem', item);
+            localStorage.setItem('cart', JSON.stringify(store.state.cart));
         };
 
-        const removeFromCart = (item) => {
+        const removeFromCart = () => {
+            store.commit('removeCartItem', item);
             emit('removeFromCart', item);
-            updateCart();
+            localStorage.setItem('cart', JSON.stringify(store.state.cart));
         };
 
         return {
