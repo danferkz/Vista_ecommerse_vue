@@ -16,7 +16,6 @@
                             <th class="py-2"></th>
                         </tr>
                     </thead>
-
                     <tbody>
                         <CartItem
                             v-for="item in cart.items"
@@ -37,7 +36,12 @@
 
                 <hr class="my-4">
 
-                <router-link to="/checkout" class="inline-block bg-gray-800 text-white py-2 px-4 rounded">Proceed to checkout</router-link>
+                <button
+                    @click="proceedToCheckout"
+                    class="inline-block bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-900"
+                >
+                    Proceed to checkout
+                </button>
             </div>
         </div>
     </div>
@@ -45,6 +49,7 @@
 
 <script>
 import CartItem from '../components/CartItem.vue';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
     name: 'Cart',
@@ -52,9 +57,7 @@ export default {
         CartItem,
     },
     computed: {
-        cart() {
-            return this.$store.state.cart;
-        },
+        ...mapState(['cart', 'isAuthenticated']),
         cartTotalLength() {
             return this.cart.items.reduce((acc, curVal) => acc + curVal.quantity, 0);
         },
@@ -63,8 +66,16 @@ export default {
         },
     },
     methods: {
+        ...mapMutations(['removeCartItem']),
+        proceedToCheckout() {
+            if (this.isAuthenticated) {
+                this.$router.push({ name: 'Checkout' });
+            } else {
+                this.$router.push({ name: 'LogIn', query: { to: '/checkout' } });
+            }
+        },
         removeFromCart(productId) {
-            this.$store.commit('removeCartItem', productId);
+            this.removeCartItem(productId);
         }
     },
     mounted() {
