@@ -11,7 +11,7 @@
 export default {
     name: 'Success',
     mounted() {
-        document.title = 'Success | Djackets';
+        document.title = 'Success | Ferreteria Mayorazgo';
     },
 };
 </script>

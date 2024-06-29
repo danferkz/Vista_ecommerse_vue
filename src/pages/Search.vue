@@ -29,7 +29,7 @@ export default {
         };
     },
     mounted() {
-        document.title = 'Search | Djackets';
+        document.title = 'Search | Ferreteria Mayorazgo';
 
         const uri = window.location.search.substring(1);
         const params = new URLSearchParams(uri);

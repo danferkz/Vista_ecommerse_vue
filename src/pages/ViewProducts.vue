@@ -38,7 +38,7 @@ export default {
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/api/v1/products/${category_slug}/${product_slug}`);
                 product.value = response.data;
-                document.title = product.value.name + ' | Djackets';
+                document.title = product.value.name + ' | Ferreteria Mayorazgo';
             } catch (error) {
                 console.error("Error fetching product:", error);
             }

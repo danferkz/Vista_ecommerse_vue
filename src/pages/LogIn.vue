@@ -12,15 +12,15 @@
                     <form @submit.prevent="submitForm" class="card-body">
                         <div class="form-control">
                             <label class="label">
-                            <span class="label-text">Email</span>
+                            <span class="label-text">Username</span>
                             </label>
-                            <input type="email" placeholder="email" class="input input-bordered" required />
+                            <input type="text" id="username" v-model="username" placeholder="Enter your username" class="input" required />
                         </div>
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-text">Password</span>
                             </label>
-                            <input type="password" placeholder="password" class="input input-bordered" required />
+                            <input type="password" id="password" v-model="password" class="input" placeholder="Enter your password" />
                             <label class="label">
                                 <a href="/sign-up" class="label-text-alt link link-hover">No esta registado? ⏰</a>
                             </label>
@@ -48,7 +48,7 @@ export default {
         };
     },
     mounted() {
-        document.title = 'Log In | Djackets';
+        document.title = 'Log In | Ferreteria Mayorazgo';
     },
     methods: {
         async submitForm() {

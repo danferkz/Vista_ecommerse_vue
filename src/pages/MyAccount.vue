@@ -33,7 +33,7 @@ export default {
         };
     },
     mounted() {
-        document.title = 'My account | Djackets';
+        document.title = 'My account | Ferreteria Mayorazgo';
         this.getMyOrders();
     },
     methods: {

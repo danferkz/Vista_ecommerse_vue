@@ -62,7 +62,7 @@ export default {
                 // Verifica que la imagen se esté cargando correctamente
                 console.log(this.product.get_image);
 
-                document.title = `${this.product.name} | Djackets`;
+                document.title = `${this.product.name} | Ferreteria Mayorazgo`;
             } catch (error) {
                 console.log(error);
             }
