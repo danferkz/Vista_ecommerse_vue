@@ -2,27 +2,33 @@
     <div class="home p-4">
         <!-- Sección de productos más recientes -->
         <div class="latest-products mb-8">
-            <h2 class="text-2xl font-bold text-center mb-4">Latest Products</h2>
+            <h2 class="text-2xl font-bold text-center mb-4">Productos Recientes</h2>
             <div v-if="latestProducts.length" class="flex flex-wrap">
                 <ProductBox 
                     v-for="product in latestProducts"
                     :key="product.id"
-                    :product="product" />
+                    :product="product"
+                    class="card w-96 bg-base-100 shadow-xl p-4" 
+                />
             </div>
-            <p v-else class="w-full text-center text-gray-500">No products available.</p>
+            <p v-else class="w-full text-center text-gray-500">No hay productos disponibles.</p>
         </div>
 
         <!-- Sección de categorías -->
         <div class="categories mb-8">
-            <h2 class="text-2xl font-bold text-center mb-4">Categories</h2>
-            <div class="flex flex-wrap">
-                <div v-for="category in categories" :key="category.slug" class="w-full md:w-1/4 p-4">
-                    <router-link :to="`/${category.slug}/`" class="block text-center bg-gray-200 p-4 shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300">
-                        <h3 class="text-xl font-semibold">{{ category.name }}</h3>
-                    </router-link>
-                </div>
-            </div>
+            <h2 class="text-2xl font-bold text-center mb-4">Categorias</h2>
+            <div class="flex flex-wrap -mx-4">
+        <div v-for="category in categories" :key="category.slug" class="w-full md:w-1/4 p-4">
+            <router-link 
+                :to="`/${category.slug}/`" 
+                class="btn glass rounded-full"
+            >
+                <h3 class="text-xl font-semibold">{{ category.name }}</h3>
+            </router-link>
         </div>
+    </div>
+</div>
+
     </div>
 </template>
 

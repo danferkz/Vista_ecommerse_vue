@@ -8,5 +8,11 @@ export default {
     extend: {},
   },
   plugins: [require('daisyui'),],
+  daisyui: {
+    themes: ["forest", "halloween"], // or false if you don't want default themes
+    base: true, // applies daisyUI base styles
+    styled: true, // applies daisyUI component styles
+    utils: true, // adds daisyUI utilities
+    logs: true, // shows logs in console
+  },
 }
-
