@@ -1,86 +1,61 @@
 <template>
-    <div class="home">
-        <section class="bg-gray-800 text-white py-8 mb-6">
-            <div class="text-center">
-                <h1 class="text-4xl font-bold mb-6">Welcome to Djackets</h1>
-                <p class="text-xl">The best jacket store online</p>
-            </div>
-        </section>
-
-        <div class="latest-products mb-12">
-            <h2 class="text-3xl font-semibold text-center mb-6">Latest Products</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <ProductBox
+    <div class="home p-4">
+        <!-- Sección de productos más recientes -->
+        <div class="latest-products mb-8">
+            <h2 class="text-2xl font-bold text-center mb-4">Latest Products</h2>
+            <div v-if="latestProducts.length" class="flex flex-wrap">
+                <ProductBox 
                     v-for="product in latestProducts"
                     :key="product.id"
-                    :product="product"
-                />
+                    :product="product" />
             </div>
+            <p v-else class="w-full text-center text-gray-500">No products available.</p>
         </div>
 
-        <div class="latest-categories">
-            <h2 class="text-3xl font-semibold text-center mb-6">Categories</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <CategoryBox
-                    v-for="category in categories"
-                    :key="category.id"
-                    :category="category"
-                />
+        <!-- Sección de categorías -->
+        <div class="categories mb-8">
+            <h2 class="text-2xl font-bold text-center mb-4">Categories</h2>
+            <div class="flex flex-wrap">
+                <div v-for="category in categories" :key="category.slug" class="w-full md:w-1/4 p-4">
+                    <router-link :to="`/${category.slug}/`" class="block text-center bg-gray-200 p-4 shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold">{{ category.name }}</h3>
+                    </router-link>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import ProductBox from '../components/ProductBox.vue';
-import CategoryBox from '../components/CategoryBox.vue';
 
 export default {
     name: 'Home',
     components: {
-        ProductBox,
-        CategoryBox,
+        ProductBox
     },
     setup() {
-        const latestProducts = ref([]);
-        const categories = ref([]);
-
-        const getLatestProducts = async () => {
-            try {
-                const response = await axios.get('/api/v1/latest-products/');
-                latestProducts.value = response.data;
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        const getCategories = async () => {
-            try {
-                const response = await axios.get('/api/v1/categories/');
-                categories.value = response.data;
-            } catch (error) {
-                console.error(error);
-            }
-        };
+        const store = useStore();
+        const latestProducts = computed(() => store.state.latestProducts);
+        const categories = computed(() => store.state.categories);
 
         onMounted(() => {
-            getLatestProducts();
-            getCategories();
-            document.title = 'Home | Djackets';
+            store.dispatch('fetchLatestProducts');
+            store.dispatch('fetchCategories');
         });
 
         return {
             latestProducts,
-            categories,
+            categories
         };
-    },
-};
+    }
+}
 </script>
 
 <style scoped>
-/* Puedes agregar estilos adicionales aquí si es necesario */
+.latest-products, .categories {
+    margin-bottom: 2rem;
+}
 </style>

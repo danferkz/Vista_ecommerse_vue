@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import axios from 'axios';
 
 export default createStore({
     state: {
@@ -7,18 +8,19 @@ export default createStore({
         },
         isAuthenticated: false,
         token: '',
-        isLoading: false
+        isLoading: false,
+        latestProducts: [],  // Productos más recientes
+        categories: [],  // Categorías
+        categoryProducts: [],  // Productos por categoría
     },
     mutations: {
         initializeStore(state) {
-            // Carga el carrito desde el almacenamiento local
             if (localStorage.getItem('cart')) {
                 state.cart = JSON.parse(localStorage.getItem('cart'));
             } else {
                 localStorage.setItem('cart', JSON.stringify(state.cart));
             }
 
-            // Carga el token desde el almacenamiento local
             if (localStorage.getItem('token')) {
                 state.token = localStorage.getItem('token');
                 state.isAuthenticated = true;
@@ -60,9 +62,7 @@ export default createStore({
             localStorage.setItem('cart', JSON.stringify(state.cart));
         },
         removeCartItem(state, productId) {
-            // Elimina el ítem del carrito usando productId
             state.cart.items = state.cart.items.filter(item => item.product.id !== productId);
-            // Actualiza el almacenamiento local
             localStorage.setItem('cart', JSON.stringify(state.cart));
         },
         setIsLoading(state, status) {
@@ -80,7 +80,41 @@ export default createStore({
             state.cart = { items: [] };
             localStorage.setItem('cart', JSON.stringify(state.cart));
         },
+        setLatestProducts(state, products) {
+            state.latestProducts = products;
+        },
+        setCategories(state, categories) {
+            state.categories = categories;
+        },
+        setCategoryProducts(state, products) {
+            state.categoryProducts = products;
+        },
     },
-    actions: {},
+    actions: {
+        async fetchLatestProducts({ commit }) {
+            try {
+                const response = await axios.get('/api/v1/latest-products/');
+                commit('setLatestProducts', response.data);
+            } catch (error) {
+                console.error('Error fetching latest products:', error);
+            }
+        },
+        async fetchCategories({ commit }) {
+            try {
+                const response = await axios.get('/api/v1/categories/');
+                commit('setCategories', response.data);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        },
+        async fetchCategoryProducts({ commit }, categorySlug) {
+            try {
+                const response = await axios.get(`/api/v1/products/${categorySlug}/`);
+                commit('setCategoryProducts', response.data);
+            } catch (error) {
+                console.error(`Error fetching products for category ${categorySlug}:`, error);
+            }
+        },
+    },
     modules: {},
 });

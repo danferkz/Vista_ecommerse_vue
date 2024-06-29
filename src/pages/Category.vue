@@ -2,22 +2,26 @@
     <div class="page-category p-4">
         <div class="flex flex-wrap">
             <div class="w-full mb-4">
-                <h2 class="text-2xl font-bold text-center">{{ category.name }}</h2>
+                <h2 class="text-2xl font-bold text-center">{{ categoryName }}</h2>
             </div>
 
-            <ProductBox 
-                v-for="product in category.products"
-                :key="product.id"
-                :product="product" />
+            <!-- Muestra los productos directamente -->
+            <div v-if="categoryProducts.length" class="w-full flex flex-wrap">
+                <ProductBox 
+                    v-for="product in categoryProducts"
+                    :key="product.id"
+                    :product="product" />
+            </div>
+            <p v-else class="w-full text-center text-gray-500">No products available in this category.</p>
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios'
-import { ref, watch, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import ProductBox from '../components/ProductBox.vue' // Ajusta la ruta según sea necesario
+import { computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
+import ProductBox from '../components/ProductBox.vue';
 
 export default {
     name: 'Category',
@@ -25,34 +29,28 @@ export default {
         ProductBox
     },
     setup() {
-        const category = ref({ products: [] });
+        const store = useStore();
         const route = useRoute();
-
-        const getCategory = async () => {
-            const categorySlug = route.params.category_slug;
-
-            try {
-                const response = await axios.get(`/api/v1/products/${categorySlug}/`);
-                category.value = response.data;
-                document.title = category.value.name + ' | Djackets';
-            } catch (error) {
-                console.log(error);
-            }
-        };
+        const categoryProducts = computed(() => store.state.categoryProducts);
+        const categoryName = computed(() => route.params.category_slug.charAt(0).toUpperCase() + route.params.category_slug.slice(1));
 
         onMounted(() => {
-            getCategory();
+            const categorySlug = route.params.category_slug;
+            store.dispatch('fetchCategoryProducts', categorySlug);
         });
 
-        watch(route, (to, from) => {
-            if (to.name === 'Category') {
-                getCategory();
-            }
+        watch(() => route.params.category_slug, (newSlug) => {
+            store.dispatch('fetchCategoryProducts', newSlug);
         });
 
         return {
-            category
+            categoryProducts,
+            categoryName
         };
     }
 }
 </script>
+
+<style scoped>
+/* Puedes agregar estilos adicionales aquí si es necesario */
+</style>

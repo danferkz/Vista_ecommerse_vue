@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store'
 
 import Home from '../pages/Home.vue'
-
 import Product from '../pages/Product.vue'
 import Category from '../pages/Category.vue'
 import Search from '../pages/Search.vue'
@@ -13,7 +12,6 @@ import MyAccount from '../pages/MyAccount.vue'
 import Checkout from '../pages/Checkout.vue'
 import Success from '../pages/Success.vue'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -22,7 +20,6 @@ const router = createRouter({
       name: 'Home',
       component: Home
     },
-    
     {
       path: '/sign-up',
       name: 'SignUp',
@@ -77,8 +74,6 @@ const router = createRouter({
   ]
 });
 
-export default router;
-
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requireLogin) && !store.state.isAuthenticated) {
     next({ name: 'LogIn', query: { to: to.path } });
@@ -86,3 +81,5 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
+export default router;
