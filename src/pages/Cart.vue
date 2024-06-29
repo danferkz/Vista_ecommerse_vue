@@ -68,13 +68,10 @@ export default {
             this.cart.items = this.cart.items.filter(i => i.product.id !== item.product.id);
         },
         fetchCartItems() {
-            axios.get('/api/cart')
-                .then(response => {
-                    this.cart.items = response.data;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+            const cartItems = localStorage.getItem('cartItems');
+            if (cartItems) {
+            this.cart.items = JSON.parse(cartItems);
+            }
         }
     },
     computed: {
