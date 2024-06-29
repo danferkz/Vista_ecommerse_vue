@@ -5,9 +5,9 @@
                 {{ item.product.name }}
             </router-link>
         </td>
-        <td>${{ item.product.price }}</td>
+        <td>${{ parseFloat(item.product.price).toFixed(2) }}</td>
         <td>
-            {{ item.quantity }}
+            {{ item.quantity }} / {{ item.product.quantity }}
             <button @click="decrementQuantity" class="text-red-500 mx-2">-</button>
             <button @click="incrementQuantity" class="text-green-500 mx-2">+</button>
         </td>
@@ -34,7 +34,7 @@ export default {
         const item = reactive({ ...props.initialItem });
 
         const getItemTotal = computed(() => {
-            return item.quantity * item.product.price;
+            return item.quantity * parseFloat(item.product.price);
         });
 
         const decrementQuantity = () => {
@@ -47,8 +47,10 @@ export default {
         };
 
         const incrementQuantity = () => {
-            item.quantity += 1;
-            updateCart();
+            if (item.quantity < item.product.quantity) {
+                item.quantity += 1;
+                updateCart();
+            }
         };
 
         const updateCart = () => {

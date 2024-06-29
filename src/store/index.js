@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
 
 export default createStore({
     state: {
@@ -12,33 +12,48 @@ export default createStore({
     mutations: {
         initializeStore(state) {
             if (localStorage.getItem('cart')) {
-                state.cart = JSON.parse(localStorage.getItem('cart'))
+                state.cart = JSON.parse(localStorage.getItem('cart'));
             } else {
-                localStorage.setItem('cart', JSON.stringify(state.cart))
+                localStorage.setItem('cart', JSON.stringify(state.cart));
             }
 
             if (localStorage.getItem('token')) {
-                state.token = localStorage.getItem('token')
-                state.isAuthenticated = true
+                state.token = localStorage.getItem('token');
+                state.isAuthenticated = true;
             } else {
-                state.token = ''
-                state.isAuthenticated = false
+                state.token = '';
+                state.isAuthenticated = false;
             }
         },
         addToCart(state, item) {
-            const exists = state.cart.items.filter(i => i.product.id === item.product.id)
-            if (exists.length) {
-                exists[0].quantity = parseInt(exists[0].quantity) + parseInt(item.quantity)
+            const exists = state.cart.items.find(i => i.product.id === item.product.id);
+            if (exists) {
+                const newQuantity = exists.quantity + item.quantity;
+                if (newQuantity <= exists.product.quantity) {
+                    exists.quantity = newQuantity;
+                } else {
+                    exists.quantity = exists.product.quantity;
+                }
             } else {
-                state.cart.items.push(item)
+                if (item.quantity <= item.product.quantity) {
+                    state.cart.items.push(item);
+                } else {
+                    item.quantity = item.product.quantity;
+                    state.cart.items.push(item);
+                }
             }
 
-            localStorage.setItem('cart', JSON.stringify(state.cart))
+            localStorage.setItem('cart', JSON.stringify(state.cart));
         },
         updateCartItem(state, updatedItem) {
             const index = state.cart.items.findIndex(item => item.product.id === updatedItem.product.id);
             if (index !== -1) {
-                state.cart.items[index] = { ...updatedItem };
+                const existingItem = state.cart.items[index];
+                if (updatedItem.quantity <= existingItem.product.quantity) {
+                    state.cart.items[index] = { ...updatedItem };
+                } else {
+                    state.cart.items[index] = { ...updatedItem, quantity: existingItem.product.quantity };
+                }
             }
             localStorage.setItem('cart', JSON.stringify(state.cart));
         },
@@ -47,21 +62,21 @@ export default createStore({
             localStorage.setItem('cart', JSON.stringify(state.cart));
         },
         setIsLoading(state, status) {
-            state.isLoading = status
+            state.isLoading = status;
         },
         setToken(state, token) {
-            state.token = token
-            state.isAuthenticated = true
+            state.token = token;
+            state.isAuthenticated = true;
         },
         removeToken(state) {
-            state.token = ''
-            state.isAuthenticated = false
+            state.token = '';
+            state.isAuthenticated = false;
         },
         clearCart(state) {
-            state.cart = { items: [] }
-            localStorage.setItem('cart', JSON.stringify(state.cart))
+            state.cart = { items: [] };
+            localStorage.setItem('cart', JSON.stringify(state.cart));
         },
     },
     actions: {},
     modules: {},
-})
+});
